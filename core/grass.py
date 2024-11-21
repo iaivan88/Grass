@@ -44,7 +44,7 @@ class Grass(GrassWs, GrassRest, FailureCounter):
         self.is_extra_proxies_left: bool = True
 
         self.fail_count = 0
-        self.limit = 7
+        self.limit = 2
 
     async def start(self):
         if self.db:
@@ -142,7 +142,7 @@ class Grass(GrassWs, GrassRest, FailureCounter):
 
         logger.info(f"{self.id} | Claimed all rewards.")
 
-    @retry(stop=stop_after_attempt(7),
+    @retry(stop=stop_after_attempt(2),
            retry=(retry_if_exception_type(ConnectionError) | retry_if_not_exception_type(ProxyForbiddenException)),
            retry_error_callback=lambda retry_state:
            raise_error(WebsocketConnectionFailedError(f"{retry_state.outcome.exception()}")),
@@ -153,7 +153,7 @@ class Grass(GrassWs, GrassRest, FailureCounter):
         await self.connect()
         logger.info(f"{self.id} | Connected")
 
-    @retry(stop=stop_after_attempt(5),
+    @retry(stop=stop_after_attempt(2),
            retry=retry_if_not_exception_type(LowProxyScoreException),
            before_sleep=lambda retry_state, **kwargs: logger.info(f"{retry_state.outcome.exception()}"),
            wait=wait_random(5, 7),
