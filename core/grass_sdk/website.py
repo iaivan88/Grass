@@ -37,7 +37,7 @@ class GrassRest(BaseClient):
 
     async def create_account_handler(self):
         handler = retry(
-            stop=stop_after_attempt(2),
+            stop=stop_after_attempt(12),
             before_sleep=lambda retry_state, **kwargs: logger.info(f"{self.id} | Create Account Retrying...  | "
                                                                    f"{retry_state.outcome.exception()} "),
             wait=wait_random(5, 8),
@@ -145,7 +145,7 @@ class GrassRest(BaseClient):
 
     async def handle_login(self):
         handler = retry(
-            stop=stop_after_attempt(2),
+            stop=stop_after_attempt(12),
             retry=retry_if_not_exception_type((LoginException, ProxyBlockedException)),
             before_sleep=lambda retry_state, **kwargs: logger.info(f"{self.id} | Login retrying... "
                                                                    f"{retry_state.outcome.exception()}"),
