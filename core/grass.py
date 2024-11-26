@@ -4,7 +4,6 @@ import uuid
 from typing import List, Optional
 
 import aiohttp
-from curl_cffi.requests import AsyncSession
 from fake_useragent import UserAgent
 from tenacity import stop_after_attempt, retry, retry_if_not_exception_type, wait_random, retry_if_exception_type
 
@@ -38,8 +37,8 @@ class Grass(GrassWs, GrassRest, FailureCounter):
 
         self.db: AccountsDB = db
 
-        self.session = AsyncSession(verify=False, trust_env=True)
-        self.ws_session = aiohttp.ClientSession(trust_env=True, connector=aiohttp.TCPConnector(ssl=False))
+        self.session: aiohttp.ClientSession = aiohttp.ClientSession(trust_env=True,
+                                                                    connector=aiohttp.TCPConnector(ssl=False))
 
         self.proxies: List[str] = []
         self.is_extra_proxies_left: bool = True
@@ -96,6 +95,7 @@ class Grass(GrassWs, GrassRest, FailureCounter):
         while True:
             try:
                 await self.connection_handler()
+
                 await self.auth_to_extension(browser_id, user_id)
 
                 if self.proxy_score is None:
@@ -103,6 +103,8 @@ class Grass(GrassWs, GrassRest, FailureCounter):
 
                     if MIN_PROXY_SCORE:
                         await self.handle_proxy_score(MIN_PROXY_SCORE)
+
+                    await self.handle_http_request_action()
 
                 for i in range(10 ** 9):
                     await self.send_ping()
@@ -132,7 +134,8 @@ class Grass(GrassWs, GrassRest, FailureCounter):
             # except TypeError as e:
             #     logger.info(f"{self.id} | Type error: {e}. Reconnecting...")
                 # await self.delay_with_log(msg=f"{self.id} | Reconnecting with delay for some minutes...", sleep_time=60)
-
+            # except Exception as e:
+            #     logger.info(f"{self.id} | {traceback.format_exc()}")
             await self.failure_handler(limit=2)
 
             await asyncio.sleep(5, 10)
@@ -160,7 +163,7 @@ class Grass(GrassWs, GrassRest, FailureCounter):
            wait=wait_random(5, 7),
            reraise=True)
     async def handle_proxy_score(self, min_score: int):
-        if (proxy_score := await self.get_proxy_score_by_device_id_handler()) is None:
+        if (proxy_score := await self.get_proxy_score_via_devices_by_device_handler()) is None:
             # logger.info(f"{self.id} | Proxy score not found for {self.proxy}. Guess Bad proxies! Continue...")
             # return None
             raise ProxyScoreNotFoundException(f"{self.id} | Proxy score not found! Retrying...")

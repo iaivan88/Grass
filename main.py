@@ -114,7 +114,7 @@ async def worker_task(_id, account: str, proxy: str = None, wallet: str = None, 
     finally:
         if grass:
             await grass.session.close()
-            await grass.ws_session.close()
+            # await grass.ws_session.close()
 
 
 async def main():
@@ -188,8 +188,5 @@ if __name__ == "__main__":
 
     if sys.platform == 'win32':
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-        loop = asyncio.ProactorEventLoop()
-        asyncio.set_event_loop(loop)
-        loop.run_until_complete(main())
-    else:
-        asyncio.run(main())
+
+    asyncio.run(main())
