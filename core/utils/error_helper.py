@@ -18,7 +18,7 @@ class FailureCounter:
 
         self.id = None
 
-        self.limit = 5
+        self.limit = 2
 
     def fail_increment(self, step: float = 1):
         self.fail_count += step
@@ -53,7 +53,7 @@ class FailureCounter:
     def reach_fail_limit(self):
         self.fail_count = self.limit
 
-    async def delay_with_log(self, msg: str, sleep_time: int = random.randint(5, 10) * 60):
+    async def delay_with_log(self, msg: str, sleep_time: int = random.randint(100, 120) * 60):
         logger.info(msg)
         await asyncio.sleep(sleep_time)
 
@@ -67,7 +67,7 @@ class FailureCounter:
         FailureCounter.global_fail_counter = {x: 1 for x in FailureCounter.global_fail_counter}
 
     @staticmethod
-    def is_global_error(min_limit: int = 10):
+    def is_global_error(min_limit: int = 3):
         amount = len(FailureCounter.global_fail_counter)
         work_count = sum(FailureCounter.global_fail_counter.values())
         fail_count = amount - work_count
