@@ -18,7 +18,7 @@ class FailureCounter:
 
         self.id = None
 
-        self.limit = 2
+        self.limit = 3
 
     def fail_increment(self, step: float = 1):
         self.fail_count += step
