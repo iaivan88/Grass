@@ -53,7 +53,7 @@ class FailureCounter:
     def reach_fail_limit(self):
         self.fail_count = self.limit
 
-    async def delay_with_log(self, msg: str, sleep_time: int = random.randint(1, 3) * 60):
+    async def delay_with_log(self, msg: str, sleep_time: int = random.randint(5, 10) * 60):
         logger.info(msg)
         await asyncio.sleep(sleep_time)
 
