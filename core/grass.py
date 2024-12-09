@@ -146,7 +146,7 @@ class Grass(GrassWs, GrassRest, FailureCounter):
 
         logger.info(f"{self.id} | Claimed all rewards.")
 
-    @retry(stop=stop_after_attempt(1),
+    @retry(stop=stop_after_attempt(2),
            retry=(retry_if_exception_type(ConnectionError) | retry_if_not_exception_type(ProxyForbiddenException)),
            retry_error_callback=lambda retry_state:
            raise_error(WebsocketConnectionFailedError(f"{retry_state.outcome.exception()}")),
