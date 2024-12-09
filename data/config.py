@@ -2,7 +2,7 @@ THREADS = 5  # for register account / claim rewards mode / approve email mode
 MIN_PROXY_SCORE = 0  # Put MIN_PROXY_SCORE = 0 not to check proxy score (if site is down)
 
 USE_2XNODE = True
-USE_CONSOLE_VERSION = False # if True - use console version and no interface shows
+USE_CONSOLE_VERSION = True # if True - use console version and no interface shows
 
 #########################################
 APPROVE_EMAIL = False  # approve email (NEEDED IMAP AND ACCESS TO EMAIL)
